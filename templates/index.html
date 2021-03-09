@@ -14,49 +14,18 @@
     <div class="col-xl">
         <script src="https://d3js.org/d3.v3.min.js"></script>
         <div id="draw_here" ></div>
+        <script type="text/javascript" src="{{url_for('static', filename='main.js')}}"></script>
         <script type="text/javascript">
-            var dataset = [ 5, 10, 20, 20, 6, 25 ];
+            visualization();
 
-            var w = 1200;
-            var h = 800;
-
-            var svg = d3.select("#draw_here")
-                    .append("svg")
-                    .attr("width", w)
-                    .attr("height", h);
-
-            var outerRadius = h / 2;
-            var innerRadius = h / 4;
-
-            var arc = d3.svg.arc()
-                    .innerRadius(innerRadius)
-                    .outerRadius(outerRadius);
-
-            var pie = d3.layout.pie();
-
-            var color = d3.scale.category10();
-
-            var arcs = svg.selectAll("g.arc")
-                    .data(pie(dataset))
-                    .enter()
-                    .append("g")
-                    .attr("class", "arc")
-                    .attr("transform", "translate("+ outerRadius + ", " + outerRadius +")");
-
-            arcs.append("path")
-                    .attr("fill", function(d, i) {
-                        return color(i)
-                    })
-                    .attr("d", arc);
-
-            arcs.append("text")
-                    .attr("transform", function(d) {
-                        return "translate(" + arc.centroid(d) + ")";
-                    })
-                    .attr("text-anchor", "middle")
-                    .text(function(d) {
-                        return d.value;
-                    });
+            fetch('/data')
+                .then(function (response) {
+                    return response.json(); // But parse it as JSON this time
+                })
+                .then(function (json) {
+                    console.log('GET response as JSON:');
+                    console.log(json); // Here’s our JSON object
+                });
         </script>
     </div>
 </div>

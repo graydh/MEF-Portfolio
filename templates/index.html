@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='index.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <title>MEF-Portfolio</title>
 </head>
 <body>
@@ -12,19 +15,44 @@
 
 <div class="container">
     <div class="col-xl">
-        <script src="https://d3js.org/d3.v3.min.js"></script>
-        <div id="draw_here" ></div>
-        <script type="text/javascript" src="{{url_for('static', filename='main.js')}}"></script>
-        <script type="text/javascript">
-            visualization();
+        <div id="chart" ></div>
+        <script type="module">
+            import donutChart from './static/main.js'
 
-            fetch('/data')
+            var json = await fetch('/data')
                 .then(function (response) {
                     return response.json(); // But parse it as JSON this time
                 })
                 .then(function (json) {
-                    console.log('GET response as JSON:');
-                    console.log(json); // Here’s our JSON object
+                    console.log(json);
+
+                    var timerInterval = 1500;
+
+                    var donut = donutChart()
+                        .width(960)
+                        .height(500)
+                        .transTime(1000) // length of transitions in ms
+                        .cornerRadius(3) // sets how rounded the corners are on each slice
+                        .padAngle(0.015) // effectively dictates the gap between slices
+                        .variable('pct')
+                        .category('sector');
+
+                    var i = 0;
+
+                    d3.select('#chart')
+                                .call(donut); // draw chart in div
+
+                    var timer = setInterval(function() {
+                        if (i === 10) { //BUG - fix upper limit
+                            // get new backend data
+                            i = 0;
+                            clearInterval(timer);
+                        }
+                        console.log(json["bySector"]);
+                        donut.data(json["bySector"]);
+                        i++;
+                    }, timerInterval);
+
                 });
         </script>
     </div>

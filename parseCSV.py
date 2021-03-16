@@ -39,10 +39,10 @@ def processCSV():
     return data
 
 def generateNewDictionary():
-    data = processCSV()
+    equityData = processCSV()
     query = []
-    for sector in data.keys():
-        for equity in data[sector]:
+    for sector in equityData.keys():
+        for equity in equityData[sector]:
             query.append(equity["symbol"])
 
     print("Querying Alpaca...")
@@ -50,12 +50,31 @@ def generateNewDictionary():
     barsetFrame = api.get_barset(query, "day", limit=1)
     #{'AAPL': [Bar({   'c': 116.4, 'h': 121, 'l': 116.21, 'o': 120.93, 't': 1615179600, 'v': 141360327})], etc}
 
-    for sector in data.keys():
-        for equity in data[sector]:
+    #BUG - "market value of each equity besiedes cash needs to be updated
+
+    for sector in equityData.keys():
+        for equity in equityData[sector]:
             bar = barsetFrame[equity['symbol']]
             if(len(bar) > 0):
                 equity['last_price'] = bar[0].c
                 equity['as_of'] = str(datetime.date.today() - datetime.timedelta(days=1))
+
+    #generate Data By Sector for outer ring
+    sectorData = []
+    schema = ["sector", "value", "pct"]
+    portfolioSum = 0
+    sectorSums = {}
+    for sector in equityData.keys():
+        sectorsum = 0
+        for equity in equityData[sector]:
+            sectorsum += equity["market_value"]
+        sectorSums[sector] = sectorsum
+        portfolioSum += sectorsum
+    for sector in equityData.keys():
+        row = {schema[0]: sector, schema[1]: sectorSums[sector], schema[2]: float(sectorSums[sector]/portfolioSum)}
+        sectorData.append(row.copy())
+
+    data = {"bySector": sectorData, "byEquity": equityData }
     return data
 
 def portfolioDictionary():

@@ -17,7 +17,7 @@
     <div class="col-xl">
         <div id="chart" ></div>
         <script type="module">
-            import donutChart from './static/main.js'
+            import donutChart from './static/main.js';
 
             var json = await fetch('/data')
                 .then(function (response) {
@@ -43,13 +43,12 @@
                                 .call(donut); // draw chart in div
 
                     var timer = setInterval(function() {
-                        if (i === 10) { //BUG - fix upper limit
+                        if (i === 10) { // TODO BUG - fix upper limit
                             // get new backend data
                             i = 0;
                             clearInterval(timer);
                         }
-                        console.log(json["bySector"]);
-                        donut.data(json["bySector"]);
+                        donut.data(json);
                         i++;
                     }, timerInterval);
 

@@ -1,5 +1,7 @@
 export default function donutChart() {
     var data = [],
+        dataInner = {},
+        currentInner = [],
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -54,6 +56,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'slices');
             svg.append('g').attr('class', 'labelName');
             svg.append('g').attr('class', 'lines');
+            svg.append('g').attr('class', 'slicesInner');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -90,6 +93,26 @@ export default function donutChart() {
             // ===========================================================================================
 
             // ===========================================================================================
+            // add inner Equity donut
+            var pieInner = d3.pie()
+                .value(function(d) { return floatFormat(d["market_value"]); })
+                .sort(null);
+
+            var arc2 = d3.arc()
+                .outerRadius(radius * 0.55)
+                .innerRadius(radius * 0.35)
+                .cornerRadius(cornerRadius)
+                .padAngle(padAngle);
+
+            var pathInner = svg.select('.slicesInner')
+                    .selectAll('pathInner')
+                    .data(pieInner(currentInner))
+                .enter().append('pathInner')
+                    .attr('fill', function(d) { return colour(d.data["name"]); })
+                    .attr('d', arc2);
+            // ===========================================================================================
+
+            // ===========================================================================================
             // add tooltip to mouse events on slices and labels
             d3.selectAll('.labelName text, .slices path').call(toolTip);
             // ===========================================================================================
@@ -97,6 +120,8 @@ export default function donutChart() {
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
+                // TODO
+                // add update calls for Inner Slices and data
 
                 var updatePath = d3.select('.slices').selectAll('path');
                 var updateLines = d3.select('.lines').selectAll('polyline');
@@ -171,25 +196,14 @@ export default function donutChart() {
 
                 // add tooltip (svg circle element) when mouse enters label or slice
                 selection.on('mouseenter', function (data) {
-
-                    svg.append('text')
-                        .attr('class', 'toolCircle')
-                        .attr('dy', -15) // hard-coded. can adjust this to adjust text vertical alignment in tooltip
-                        .html(toolTipHTML(data)) // add text to the circle.
-                        .style('font-size', '.7em')
-                        .style('text-anchor', 'middle'); // centres text in tooltip
-
-                    svg.append('circle')
-                        .attr('class', 'toolCircle')
-                        .attr('r', radius * 0.55) // radius of tooltip circle
-                        .style('fill', colour(data.data[category])) // colour based on category mouse is over
-                        .style('fill-opacity', 0.35);
-
+                    // TODO
+                    // create inner donut of sector breakdown
+                    console.log(dataInner[data.data[category]]);
                 });
 
                 // remove the tooltip when mouse leaves the slice/label
                 selection.on('mouseout', function () {
-                    d3.selectAll('.toolCircle').remove();
+                    //d3.selectAll('.slicesInner').remove();
                 });
             }
 
@@ -381,7 +395,8 @@ export default function donutChart() {
 
     chart.data = function(value) {
         if (!arguments.length) return data;
-        data = value;
+        data = value["bySector"];
+        dataInner = value["byEquity"];
         if (typeof updateData === 'function') updateData();
         return chart;
     };

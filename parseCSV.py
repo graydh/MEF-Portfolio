@@ -2,10 +2,7 @@ import csv
 import datetime
 import alpaca_trade_api.rest
 
-#data for visualization
-lastData = None
-#last timestamp to avoid numerous API calls
-lastDataDateTime = None
+lastCSV = {"time": None, "dict": None}
 
 api = alpaca_trade_api.rest.REST()
 
@@ -41,14 +38,14 @@ def processCSV():
                 equity["avg_cost"] = round((equity["total_cost"] / equity["quantity"]), 2)
     return data
 
-
-def portfolioDictionary():
+def generateNewDictionary():
     data = processCSV()
     query = []
     for sector in data.keys():
         for equity in data[sector]:
             query.append(equity["symbol"])
 
+    print("Querying Alpaca...")
     #Alpaca Historical Data Query
     barsetFrame = api.get_barset(query, "day", limit=1)
     #{'AAPL': [Bar({   'c': 116.4, 'h': 121, 'l': 116.21, 'o': 120.93, 't': 1615179600, 'v': 141360327})], etc}
@@ -60,6 +57,15 @@ def portfolioDictionary():
                 equity['last_price'] = bar[0].c
                 equity['as_of'] = str(datetime.date.today() - datetime.timedelta(days=1))
     return data
+
+def portfolioDictionary():
+    if lastCSV["time"] == None:
+        lastCSV["time"] = datetime.datetime.now()
+        lastCSV["dict"] = generateNewDictionary()
+    elif datetime.datetime.now() - lastCSV["time"] > datetime.timedelta(minutes=4):
+        lastCSV["time"] = datetime.datetime.now()
+        lastCSV["dict"] = generateNewDictionary()
+    return lastCSV["dict"]
 
 
 

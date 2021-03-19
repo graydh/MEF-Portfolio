@@ -1,7 +1,7 @@
 export default function donutChart() {
     var data = [],
         dataInner = {},
-        currentInner = [],
+        currentInner = "Healthcare",
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -56,7 +56,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'slices');
             svg.append('g').attr('class', 'labelName');
             svg.append('g').attr('class', 'lines');
-            svg.append('g').attr('class', 'slicesInner');
+            svg.append('g').attr('class', 'inner');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -104,10 +104,10 @@ export default function donutChart() {
                 .cornerRadius(cornerRadius)
                 .padAngle(padAngle);
 
-            var pathInner = svg.select('.slicesInner')
-                    .selectAll('pathInner')
-                    .data(pieInner(currentInner))
-                .enter().append('pathInner')
+            var pathInner = svg.select('.inner')
+                    .selectAll('path')
+                    .data(pieInner([]))
+                .enter().append('path')
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('d', arc2);
             // ===========================================================================================
@@ -120,15 +120,20 @@ export default function donutChart() {
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
+                console.log("UpdateData");
                 // TODO
-                // add update calls for Inner Slices and data
+                // bug still happending with inner adding new slices every time
 
                 var updatePath = d3.select('.slices').selectAll('path');
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
+                var updateInnerData = d3.select('.inner').selectAll('path');
 
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
+
+                var innerdata0 = pathInner.data(),
+                    innerdata1 = pieInner(dataInner[currentInner]);
 
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
@@ -136,6 +141,9 @@ export default function donutChart() {
                 updatePath = updatePath.data(data1, key);
                 updateLines = updateLines.data(data1, key);
                 updateLabels = updateLabels.data(data1, key);
+                console.log(innerdata1);
+                updateInnerData = updateInnerData.data(innerdata1, key);
+
 
                 // adds new slices/lines/labels
                 updatePath.enter().append('path')
@@ -153,6 +161,10 @@ export default function donutChart() {
                     .attr('transform', labelTransform)
                     .style('text-anchor', function(d) { return (midAngle(d)) < Math.PI ? 'start' : 'end'; });
 
+                updateInnerData.enter().append('path')
+                    .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; }) // TODO Bug this doesnt work due to assumptions with no two elements having the same key value
+                    .attr('fill', function(d) {  return colour(d.data["name"]); })
+
                 // removes slices/labels/lines that are not in the current dataset
                 updatePath.exit()
                     .transition()
@@ -169,6 +181,12 @@ export default function donutChart() {
                 updateLabels.exit()
                     .remove();
 
+                updateInnerData.exit()
+                    .transition()
+                    .duration(transTime)
+                    .attrTween("d", arcTween2)
+                    .remove();
+
                 // animates the transition from old angle to new angle for slices/lines/labels
                 updatePath.transition().duration(transTime)
                     .attrTween('d', arcTween);
@@ -179,6 +197,9 @@ export default function donutChart() {
                 updateLabels.transition().duration(transTime)
                     .attrTween('transform', labelTween)
                     .styleTween('text-anchor', labelStyleTween);
+
+                updateInnerData.transition().duration(transTime)
+                    .attrTween('d', arcTween2);
 
                 updateLabels.html(updateLabelText); // update the label text
 
@@ -196,14 +217,12 @@ export default function donutChart() {
 
                 // add tooltip (svg circle element) when mouse enters label or slice
                 selection.on('mouseenter', function (data) {
-                    // TODO
-                    // create inner donut of sector breakdown
-                    console.log(dataInner[data.data[category]]);
+                    // TODO hide all but selected
+                    currentInner = data.data[category];
                 });
 
                 // remove the tooltip when mouse leaves the slice/label
                 selection.on('mouseout', function () {
-                    //d3.selectAll('.slicesInner').remove();
                 });
             }
 
@@ -293,6 +312,12 @@ export default function donutChart() {
                 var i = d3.interpolate(this._current, d);
                 this._current = i(0);
                 return function(t) { return arc(i(t)); };
+            }
+
+            function arcTween2(d) {
+                var i = d3.interpolate(this._current, d);
+                this._current = i(0);
+                return function(t) { return arc2(i(t)); };
             }
 
             function findNeighborArc(i, data0, data1, key) {

@@ -26,7 +26,7 @@
                 .then(function (json) {
                     console.log(json);
 
-                    var timerInterval = 1500;
+                    var timerInterval = 1000;
 
                     var donut = donutChart()
                         .width(960)
@@ -43,9 +43,7 @@
                                 .call(donut); // draw chart in div
 
                     var timer = setInterval(function() {
-                        if (i === 10) { // TODO BUG - fix upper limit
-                            // get new backend data
-                            i = 0;
+                        if (i === 120) { // TODO BUG - fix upper limit - currently 2 mins
                             clearInterval(timer);
                         }
                         donut.data(json);

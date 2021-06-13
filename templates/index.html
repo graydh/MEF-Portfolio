@@ -24,31 +24,20 @@
                     return response.json(); // But parse it as JSON this time
                 })
                 .then(function (json) {
-                    console.log(json);
-
-                    var timerInterval = 1000;
 
                     var donut = donutChart()
-                        .width(960)
+                        .width(1020)
                         .height(500)
-                        .transTime(1000) // length of transitions in ms
+                        .transTime(200) // length of transitions in ms
                         .cornerRadius(3) // sets how rounded the corners are on each slice
                         .padAngle(0.015) // effectively dictates the gap between slices
                         .variable('pct')
-                        .category('sector');
+                        .category('sector')
+                        .variableInner('pct')
+                        .categoryInner('name');
+                    donut.data(json);
+                    d3.select('#chart').call(donut); // draw chart in div
 
-                    var i = 0;
-
-                    d3.select('#chart')
-                                .call(donut); // draw chart in div
-
-                    var timer = setInterval(function() {
-                        if (i === 120) { // TODO BUG - fix upper limit - currently 2 mins
-                            clearInterval(timer);
-                        }
-                        donut.data(json);
-                        i++;
-                    }, timerInterval);
 
                 });
         </script>

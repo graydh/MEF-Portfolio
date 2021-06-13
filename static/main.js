@@ -1,19 +1,25 @@
 export default function donutChart() {
-    var data = [],
-        dataInner = {},
+    var data = [], // outer donut
+        dataI = [], // inner donut (selection)
+        dataInner = {}, // inner donut (all sectors)
         currentInner = "Healthcare",
+        updatedInner = false,
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
-        colour = d3.scaleOrdinal(d3.schemeCategory20c), // colour scheme
+        colour = d3.scaleOrdinal(d3.schemeCategory20c), // colour scheme TODO
         variable, // value in data that will dictate proportions on chart
+        variableInner,
         category, // compare data by
+        categoryInner,
         padAngle, // effectively dictates the gap between slices
         transTime, // transition time
         updateData,
         floatFormat = d3.format('.4r'),
         cornerRadius, // sets how rounded the corners are on each slice
-        percentFormat = d3.format(',.2%');
+        percentFormat = d3.format(',.2%'),
+        keyWidth = 100,
+        keyHeight = 250;
 
     function chart(selection){
         selection.each(function() {
@@ -57,6 +63,8 @@ export default function donutChart() {
             svg.append('g').attr('class', 'labelName');
             svg.append('g').attr('class', 'lines');
             svg.append('g').attr('class', 'inner');
+            svg.append('g').attr('class', 'innerLabelName');
+            svg.append('g').attr('class', 'keyRect');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -106,24 +114,29 @@ export default function donutChart() {
 
             var pathInner = svg.select('.inner')
                     .selectAll('path')
-                    .data(pieInner([]))
+                    .data(pieInner(dataI))
                 .enter().append('path')
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('d', arc2);
             // ===========================================================================================
+            var keyRect = svg.select('.keyRect')
+                .append('rect')
+                .attr('width', keyWidth)
+                .attr('height', keyHeight)
+                .attr('stroke', 'black')
+                .attr('fill', '#69a3b2')
+                .attr('transform', 'translate(' + (width / 2 - keyWidth) + ',' + (-(height / 2) + ((height-keyHeight)/2)) + ')');;
+
+            // ===========================================================================================
 
             // ===========================================================================================
             // add tooltip to mouse events on slices and labels
-            d3.selectAll('.labelName text, .slices path').call(toolTip);
+            d3.selectAll('.slices path').call(toolTip);
             // ===========================================================================================
 
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
-                console.log("UpdateData");
-                // TODO
-                // bug still happending with inner adding new slices every time
-
                 var updatePath = d3.select('.slices').selectAll('path');
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
@@ -131,9 +144,8 @@ export default function donutChart() {
 
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
-
                 var innerdata0 = pathInner.data(),
-                    innerdata1 = pieInner(dataInner[currentInner]);
+                    innerdata1 = pieInner(dataI);
 
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
@@ -141,7 +153,6 @@ export default function donutChart() {
                 updatePath = updatePath.data(data1, key);
                 updateLines = updateLines.data(data1, key);
                 updateLabels = updateLabels.data(data1, key);
-                console.log(innerdata1);
                 updateInnerData = updateInnerData.data(innerdata1, key);
 
 
@@ -162,7 +173,7 @@ export default function donutChart() {
                     .style('text-anchor', function(d) { return (midAngle(d)) < Math.PI ? 'start' : 'end'; });
 
                 updateInnerData.enter().append('path')
-                    .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; }) // TODO Bug this doesnt work due to assumptions with no two elements having the same key value
+                    .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; })
                     .attr('fill', function(d) {  return colour(d.data["name"]); })
 
                 // removes slices/labels/lines that are not in the current dataset
@@ -188,41 +199,26 @@ export default function donutChart() {
                     .remove();
 
                 // animates the transition from old angle to new angle for slices/lines/labels
-                updatePath.transition().duration(transTime)
-                    .attrTween('d', arcTween);
-
-                updateLines.transition().duration(transTime)
-                    .attrTween('points', pointTween);
-
-                updateLabels.transition().duration(transTime)
-                    .attrTween('transform', labelTween)
-                    .styleTween('text-anchor', labelStyleTween);
-
                 updateInnerData.transition().duration(transTime)
                     .attrTween('d', arcTween2);
 
                 updateLabels.html(updateLabelText); // update the label text
 
                 // add tooltip to mouse events on slices and labels
-                d3.selectAll('.labelName text, .slices path').call(toolTip);
+                d3.selectAll('.slices path').call(toolTip);
 
             };
-            // ===========================================================================================
-            // Functions
+
+
             // calculates the angle for the middle of a slice
             function midAngle(d) { return d.startAngle + (d.endAngle - d.startAngle) / 2; }
 
-            // function that creates and adds the tool tip to a selected element
             function toolTip(selection) {
-
-                // add tooltip (svg circle element) when mouse enters label or slice
-                selection.on('mouseenter', function (data) {
-                    // TODO hide all but selected
+                selection.on('click', function (data) {
                     currentInner = data.data[category];
-                });
-
-                // remove the tooltip when mouse leaves the slice/label
-                selection.on('mouseout', function () {
+                    dataI = dataInner[currentInner]
+                    updateData();
+                    updateData(); //TODO: bug where new labels are added but not sized correctly after one call within inner donut
                 });
             }
 
@@ -338,6 +334,7 @@ export default function donutChart() {
             }
 
             function key(d) {
+                if (d.data['symbol']) return d.data[categoryInner]; // If inner data
                 return d.data[category];
             }
 
@@ -351,9 +348,6 @@ export default function donutChart() {
                     }
                 }
             }
-
-            // ===========================================================================================
-
         });
     }
 
@@ -412,6 +406,18 @@ export default function donutChart() {
         return chart;
     };
 
+    chart.variableInner = function(value) {
+        if (!arguments.length) return variableInner;
+        variableInner = value;
+        return chart;
+    };
+
+    chart.categoryInner = function(value) {
+        if (!arguments.length) return categoryInner;
+        categoryInner = value;
+        return chart;
+    };
+
     chart.transTime = function(value) {
         if (!arguments.length) return transTime;
         transTime = value;
@@ -421,7 +427,8 @@ export default function donutChart() {
     chart.data = function(value) {
         if (!arguments.length) return data;
         data = value["bySector"];
-        dataInner = value["byEquity"];
+        dataInner = value["byEquity"][0];
+        dataI = dataInner[currentInner]
         if (typeof updateData === 'function') updateData();
         return chart;
     };

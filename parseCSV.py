@@ -1,5 +1,6 @@
 import csv
 import datetime
+import copy
 import alpaca_trade_api.rest
 
 lastCSV = {"time": None, "dict": None}
@@ -31,7 +32,7 @@ def processCSV():
             for col in columns:
                 if (col not in includes) or equity[col] == "-":
                     equity.pop(col)
-                elif col == "avg_cost" or col == "quantity" or col == "total_cost" or col == "market_value":
+                elif col == "avg_cost" or col == "quantity" or col == "total_cost" or col == "market_value" or col == "last_price":
                     equity[col] = float(equity[col].replace(',', ''))
 
             if sector != "Cash":
@@ -39,26 +40,37 @@ def processCSV():
     return data
 
 def generateNewDictionary():
-    equityData = processCSV()
-    query = []
+    visualDataArray = [] #each index is moment in visualization time or 'tick'
+
+    equityData = processCSV() #extract holdings info from CSV
+
+    query = [] #Symbol query for Alpaca
     for sector in equityData.keys():
         for equity in equityData[sector]:
             query.append(equity["symbol"])
 
     print("Querying Alpaca...")
-    #Alpaca Historical Data Query
-    barsetFrame = api.get_barset(query, "day", limit=1)
-    #{'AAPL': [Bar({   'c': 116.4, 'h': 121, 'l': 116.21, 'o': 120.93, 't': 1615179600, 'v': 141360327})], etc}
 
+    ticks = 1 #time increments to include in data
+    barsetFrame = api.get_barset(query, "day", limit=ticks)  #{'AAPL': [Bar({   'c': 116.4, 'h': 121, 'l': 116.21, 'o': 120.93, 't': 1615179600, 'v': 141360327})], etc}
     #BUG - "market value of each equity besiedes cash needs to be updated
 
-    for sector in equityData.keys():
-        for equity in equityData[sector]:
-            bar = barsetFrame[equity['symbol']]
-            if(len(bar) > 0):
-                equity['last_price'] = bar[0].c
-                equity['as_of'] = str(datetime.date.today() - datetime.timedelta(days=1))
+    for i in range(ticks):
+        for sector in equityData.keys():
+            sectorSum = 0
+            for k in range(len(equityData[sector])):
+                bar = barsetFrame[equityData[sector][k]['symbol']]
+                if(len(bar) > 0):
+                    equityData[sector][k]['last_price'] = float(bar[i].c)
+                    equityData[sector][k]['market_value'] = equityData[sector][k]['last_price'] * equityData[sector][k]['quantity']
+                    #equityData[sector][k]['as_of'] = str(datetime.date.today() - datetime.timedelta(days=1)) #wrong
+                sectorSum += equityData[sector][k]['market_value']
+            for k in range(len(equityData[sector])):
+                equityData[sector][k]['pct'] = equityData[sector][k]['market_value'] / sectorSum
 
+        visualDataArray.append(copy.deepcopy(equityData))
+
+    #TODO - refactor to single data model
     #generate Data By Sector for outer ring
     sectorData = []
     schema = ["sector", "value", "pct"]
@@ -74,7 +86,7 @@ def generateNewDictionary():
         row = {schema[0]: sector, schema[1]: sectorSums[sector], schema[2]: float(sectorSums[sector]/portfolioSum)}
         sectorData.append(row.copy())
 
-    data = {"bySector": sectorData, "byEquity": equityData }
+    data = {"bySector": sectorData, "byEquity": visualDataArray}
     return data
 
 def portfolioDictionary():

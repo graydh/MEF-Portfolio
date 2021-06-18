@@ -2,8 +2,8 @@ export default function donutChart() {
     var data = [], // outer donut
         dataI = [], // inner donut (selection)
         dataInner = {}, // inner donut (all sectors)
-        currentInner = "Healthcare",
-        updatedInner = false,
+        currentInner = "Cash",
+        currentEquityIndex = 0,
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -28,13 +28,10 @@ export default function donutChart() {
             // Set up constructors for making donut. See https://github.com/d3/d3-shape/blob/master/README.md
             var radius = Math.min(width, height) / 2;
 
-            // creates a new pie generator
             var pie = d3.pie()
                 .value(function(d) { return floatFormat(d[variable]); })
                 .sort(null);
 
-            // contructs and arc generator. This will be used for the donut. The difference between outer and inner
-            // radius will dictate the thickness of the donut
             var arc = d3.arc()
                 .outerRadius(radius * 0.8)
                 .innerRadius(radius * 0.6)
@@ -64,7 +61,8 @@ export default function donutChart() {
             svg.append('g').attr('class', 'lines');
             svg.append('g').attr('class', 'inner');
             svg.append('g').attr('class', 'innerLabelName');
-            svg.append('g').attr('class', 'keyRect');
+            var keyRect = svg.append('g').attr('class', 'keyRect')
+                .attr('transform', 'translate(' + (width / 2 - keyWidth) + ',' + (-(height / 2) + ((height-keyHeight)/2)) + ')');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -119,13 +117,16 @@ export default function donutChart() {
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('d', arc2);
             // ===========================================================================================
-            var keyRect = svg.select('.keyRect')
-                .append('rect')
+            console.log(dataI[currentEquityIndex]);
+            var keyData = svg.select('.keyRect').data(dataI[currentEquityIndex])
+
+            keyRect.append('rect')
                 .attr('width', keyWidth)
                 .attr('height', keyHeight)
                 .attr('stroke', 'black')
-                .attr('fill', '#69a3b2')
-                .attr('transform', 'translate(' + (width / 2 - keyWidth) + ',' + (-(height / 2) + ((height-keyHeight)/2)) + ')');;
+                .attr('fill', 'none');
+            keyRect.append('text')
+                .text('HelloWorld');
 
             // ===========================================================================================
 
@@ -141,11 +142,17 @@ export default function donutChart() {
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
                 var updateInnerData = d3.select('.inner').selectAll('path');
+                var updateKey = d3.select('.keyRect').selectAll('text');
 
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
                 var innerdata0 = pathInner.data(),
                     innerdata1 = pieInner(dataI);
+                var keydata0 = keyRect.data(),
+                    keydata1 = dataI[currentEquityIndex];
+
+                console.log(keydata1);
+                //TODO: update data for key, list elements: name, symbol, market value -> if exists -> return (calc), purchase price (per unit), current price
 
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
@@ -206,6 +213,7 @@ export default function donutChart() {
 
                 // add tooltip to mouse events on slices and labels
                 d3.selectAll('.slices path').call(toolTip);
+                d3.selectAll('.inner path').call(toolTip);
 
             };
 
@@ -215,8 +223,14 @@ export default function donutChart() {
 
             function toolTip(selection) {
                 selection.on('click', function (data) {
-                    currentInner = data.data[category];
-                    dataI = dataInner[currentInner]
+                    if(data.data['asset_type'] != null){
+                        currentEquityIndex = data.index
+                    }
+                    else{
+                        currentInner = data.data[category];
+                        dataI = dataInner[currentInner];
+                        currentEquityIndex = 0;
+                    }
                     updateData();
                     updateData(); //TODO: bug where new labels are added but not sized correctly after one call within inner donut
                 });
@@ -334,7 +348,7 @@ export default function donutChart() {
             }
 
             function key(d) {
-                if (d.data['symbol']) return d.data[categoryInner]; // If inner data
+                if (d.data['name']) return d.data[categoryInner]; // If inner data
                 return d.data[category];
             }
 
@@ -427,7 +441,7 @@ export default function donutChart() {
     chart.data = function(value) {
         if (!arguments.length) return data;
         data = value["bySector"];
-        dataInner = value["byEquity"][0];
+        dataInner = value["byEquity"][0]; //hardcode 0 for 1 time tick instead of dynamic-
         dataI = dataInner[currentInner]
         if (typeof updateData === 'function') updateData();
         return chart;

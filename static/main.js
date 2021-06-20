@@ -1,9 +1,11 @@
 export default function donutChart() {
     var data = [], // outer donut
-        dataI = [], // inner donut (selection)
+        dataI = [], // inner donut (selection),
+        dataKey = [],
         dataInner = {}, // inner donut (all sectors)
         currentInner = "Cash",
         currentEquityIndex = 0,
+        keyDataStrings = [],
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -15,6 +17,7 @@ export default function donutChart() {
         padAngle, // effectively dictates the gap between slices
         transTime, // transition time
         updateData,
+        generateKeyList,
         floatFormat = d3.format('.4r'),
         cornerRadius, // sets how rounded the corners are on each slice
         percentFormat = d3.format(',.2%'),
@@ -61,7 +64,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'lines');
             svg.append('g').attr('class', 'inner');
             svg.append('g').attr('class', 'innerLabelName');
-            var keyRect = svg.append('g').attr('class', 'keyRect')
+            svg.append('g').attr('class', 'keyRect')
                 .attr('transform', 'translate(' + (width / 2 - keyWidth) + ',' + (-(height / 2) + ((height-keyHeight)/2)) + ')');
             // ===========================================================================================
 
@@ -117,16 +120,26 @@ export default function donutChart() {
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('d', arc2);
             // ===========================================================================================
-            console.log(dataI[currentEquityIndex]);
-            var keyData = svg.select('.keyRect').data(dataI[currentEquityIndex])
+            //TODO function to return text rows from dataI[currentEquityIndex] -> pass output to data() for keyData -> .enter().append('text')
+            generateKeyList = function(dataObj) { //dataI[currentEquityIndex] as parameter
+                var result = [];
+                result.push("Name: " + dataObj["name"]);
+                result.push("Symbol: " + dataObj["symbol"]);
+                result.push("Value: $" + dataObj["market_value"]);
+                return result;
+            }
 
-            keyRect.append('rect')
+            var keyRect = svg.select('.keyRect').append('rect')
                 .attr('width', keyWidth)
                 .attr('height', keyHeight)
                 .attr('stroke', 'black')
                 .attr('fill', 'none');
-            keyRect.append('text')
-                .text('HelloWorld');
+            dataKey = generateKeyList(dataI[currentEquityIndex]);
+            var keyText = svg.select('.keyRect').selectAll('text').data(dataKey).enter()
+                .append('text')
+                .attr('y', function(d,i){ return 30 + i*40})
+                .attr('x', 10)
+                .text(function(d){ return d});
 
             // ===========================================================================================
 
@@ -144,12 +157,14 @@ export default function donutChart() {
                 var updateInnerData = d3.select('.inner').selectAll('path');
                 var updateKey = d3.select('.keyRect').selectAll('text');
 
+                dataKey = generateKeyList(dataI[currentEquityIndex]);
+
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
                 var innerdata0 = pathInner.data(),
                     innerdata1 = pieInner(dataI);
-                var keydata0 = keyRect.data(),
-                    keydata1 = dataI[currentEquityIndex];
+                var keydata0 = keyText.data(),
+                    keydata1 = dataKey;
 
                 console.log(keydata1);
                 //TODO: update data for key, list elements: name, symbol, market value -> if exists -> return (calc), purchase price (per unit), current price
@@ -161,6 +176,7 @@ export default function donutChart() {
                 updateLines = updateLines.data(data1, key);
                 updateLabels = updateLabels.data(data1, key);
                 updateInnerData = updateInnerData.data(innerdata1, key);
+                updateKey = updateKey.data(keydata1);
 
 
                 // adds new slices/lines/labels
@@ -181,7 +197,12 @@ export default function donutChart() {
 
                 updateInnerData.enter().append('path')
                     .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; })
-                    .attr('fill', function(d) {  return colour(d.data["name"]); })
+                    .attr('fill', function(d) {  return colour(d.data["name"]); });
+
+                updateKey.enter().append('text')
+                    .attr('y', function(d,i){ return 30 + i*40})
+                    .attr('x', 10)
+                    .text(function(d){ return d});
 
                 // removes slices/labels/lines that are not in the current dataset
                 updatePath.exit()
@@ -203,6 +224,9 @@ export default function donutChart() {
                     .transition()
                     .duration(transTime)
                     .attrTween("d", arcTween2)
+                    .remove();
+
+                updateKey.exit()
                     .remove();
 
                 // animates the transition from old angle to new angle for slices/lines/labels

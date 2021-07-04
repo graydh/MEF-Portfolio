@@ -21,8 +21,9 @@ export default function donutChart() {
         floatFormat = d3.format('.4r'),
         cornerRadius, // sets how rounded the corners are on each slice
         percentFormat = d3.format(',.2%'),
-        keyWidth = 100,
-        keyHeight = 250;
+        keyWidth = 150,
+        keyHeight = 350,
+        keyMaxTextLength = 13;
 
     function chart(selection){
         selection.each(function() {
@@ -75,6 +76,7 @@ export default function donutChart() {
                 .data(pie(data))
               .enter().append('path')
                 .attr('fill', function(d) { return colour(d.data[category]); })
+                .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; })
                 .attr('d', arc);
             // ===========================================================================================
 
@@ -118,15 +120,30 @@ export default function donutChart() {
                     .data(pieInner(dataI))
                 .enter().append('path')
                     .attr('fill', function(d) { return colour(d.data["name"]); })
+                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
             // ===========================================================================================
-            //TODO function to return text rows from dataI[currentEquityIndex] -> pass output to data() for keyData -> .enter().append('text')
+            var ellipse = function(stringToFinish){
+                if(stringToFinish.length > keyMaxTextLength) {
+                    return "..."
+                }
+                return ""
+            }
+
             generateKeyList = function(dataObj) { //dataI[currentEquityIndex] as parameter
-                var result = [];
-                result.push("Name: " + dataObj["name"]);
-                result.push("Symbol: " + dataObj["symbol"]);
-                result.push("Value: $" + dataObj["market_value"]);
-                return result;
+                console.log(dataObj);
+                dataKey = [];
+                dataKey.push("Sector: " + dataObj["sector"].substring(0, keyMaxTextLength) + ellipse(dataObj["sector"]));
+                dataKey.push("Name: " + dataObj["name"].substring(0, keyMaxTextLength) + ellipse(dataObj["name"]));
+                dataKey.push("Ticker: " + dataObj["symbol"]);
+                if(dataObj["asset_type"] == "Stocks / Options"){
+                    dataKey.push("Current: $" + dataObj["last_price"]);
+                    dataKey.push("Cost: $" + dataObj["avg_cost"]);
+                    dataKey.push("Return: " + parseFloat(100 * (dataObj["last_price"] - dataObj["avg_cost"]) / dataObj["avg_cost"]).toFixed(2).toString() + "%");
+                    dataKey.push("Count: " + dataObj["quantity"]);
+                }
+                dataKey.push("Value: $" + floatFormat(dataObj["market_value"]));
+                return dataKey;
             }
 
             var keyRect = svg.select('.keyRect').append('rect')
@@ -151,23 +168,23 @@ export default function donutChart() {
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
-                var updatePath = d3.select('.slices').selectAll('path');
+                var updatePath = d3.select('.slices').selectAll('path')
+                    .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; });
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
-                var updateInnerData = d3.select('.inner').selectAll('path');
+                var updateInnerData = d3.select('.inner').selectAll('path')
+                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; });
                 var updateKey = d3.select('.keyRect').selectAll('text');
 
-                dataKey = generateKeyList(dataI[currentEquityIndex]);
+                generateKeyList(dataI[currentEquityIndex]);
+                console.log(currentEquityIndex);
 
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
-                var innerdata0 = pathInner.data(),
+                var innerdata0 = updateInnerData.data(),
                     innerdata1 = pieInner(dataI);
-                var keydata0 = keyText.data(),
+                var keydata0 = updateKey.data(),
                     keydata1 = dataKey;
-
-                console.log(keydata1);
-                //TODO: update data for key, list elements: name, symbol, market value -> if exists -> return (calc), purchase price (per unit), current price
 
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
@@ -176,12 +193,13 @@ export default function donutChart() {
                 updateLines = updateLines.data(data1, key);
                 updateLabels = updateLabels.data(data1, key);
                 updateInnerData = updateInnerData.data(innerdata1, key);
-                updateKey = updateKey.data(keydata1);
+                updateKey = updateKey.data(keydata1, function(d) { return d; } );
 
 
                 // adds new slices/lines/labels
                 updatePath.enter().append('path')
                     .each(function(d, i) { this._current = findNeighborArc(i, data0, data1, key) || d; })
+                    .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; })
                     .attr('fill', function(d) {  return colour(d.data[category]); })
                     .attr('d', arc);
 
@@ -197,9 +215,12 @@ export default function donutChart() {
 
                 updateInnerData.enter().append('path')
                     .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; })
-                    .attr('fill', function(d) {  return colour(d.data["name"]); });
+                    .attr('fill', function(d) { return colour(d.data["name"]); })
+                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
+                    .attr('d', arc2);
 
                 updateKey.enter().append('text')
+                    .each(function(d, i) { this._current = d; })
                     .attr('y', function(d,i){ return 30 + i*40})
                     .attr('x', 10)
                     .text(function(d){ return d});
@@ -208,6 +229,9 @@ export default function donutChart() {
                 updatePath.exit()
                     .transition()
                     .duration(transTime)
+                    //change fill and stroke opacity to avoid CSS conflicts
+                    .attr("fill-opacity", 0)
+                    .attr("stroke-opacity", 0)
                     .attrTween("d", arcTween)
                     .remove();
 
@@ -222,7 +246,7 @@ export default function donutChart() {
 
                 updateInnerData.exit()
                     .transition()
-                    .duration(transTime)
+                    .duration(1)
                     .attrTween("d", arcTween2)
                     .remove();
 
@@ -256,7 +280,6 @@ export default function donutChart() {
                         currentEquityIndex = 0;
                     }
                     updateData();
-                    updateData(); //TODO: bug where new labels are added but not sized correctly after one call within inner donut
                 });
             }
 
@@ -372,6 +395,7 @@ export default function donutChart() {
             }
 
             function key(d) {
+                if (d.data === undefined) return null;
                 if (d.data['name']) return d.data[categoryInner]; // If inner data
                 return d.data[category];
             }

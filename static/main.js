@@ -3,7 +3,7 @@ export default function donutChart() {
         dataI = [], // inner donut (selection),
         dataKey = [],
         dataInner = {}, // inner donut (all sectors)
-        currentInner = "Cash",
+        currentInner = "Healthcare",
         currentEquityIndex = 0,
         keyDataStrings = [],
         width,
@@ -115,6 +115,10 @@ export default function donutChart() {
                 .cornerRadius(cornerRadius)
                 .padAngle(padAngle);
 
+            var arcInnerText = d3.arc()
+                .outerRadius(radius * 0.2)
+                .innerRadius(radius * 0.2);
+
             var pathInner = svg.select('.inner')
                     .selectAll('path')
                     .data(pieInner(dataI))
@@ -122,6 +126,16 @@ export default function donutChart() {
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
+
+            var centerLabel = svg.select('innerLabelName')
+                    .selectAll('text')
+                    .data(pieInner(dataI))
+                .enter().append('text')
+                    .attr('dy', '.35em')
+                    .html(updateInnerLabelText)
+                    .attr('transform', labelInnerTransform)
+                    .style('text-anchor', function(d) { return (midAngle(d)) < Math.PI ? 'start' : 'end'; });
+
             // ===========================================================================================
             var ellipse = function(stringToFinish){
                 if(stringToFinish.length > keyMaxTextLength) {
@@ -131,7 +145,6 @@ export default function donutChart() {
             }
 
             generateKeyList = function(dataObj) { //dataI[currentEquityIndex] as parameter
-                console.log(dataObj);
                 dataKey = [];
                 dataKey.push("Sector: " + dataObj["sector"].substring(0, keyMaxTextLength) + ellipse(dataObj["sector"]));
                 dataKey.push("Name: " + dataObj["name"].substring(0, keyMaxTextLength) + ellipse(dataObj["name"]));
@@ -162,22 +175,23 @@ export default function donutChart() {
 
             // ===========================================================================================
             // add tooltip to mouse events on slices and labels
-            d3.selectAll('.slices path').call(toolTip);
+            d3.selectAll('.slices path ').call(toolTip);
+            d3.selectAll('.inner path').call(toolTip);
             // ===========================================================================================
-
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
+                //TODO - bug where inner labels dont appear til first click
                 var updatePath = d3.select('.slices').selectAll('path')
                     .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; });
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
                 var updateInnerData = d3.select('.inner').selectAll('path')
                     .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; });
+                var updateInnerLabels = d3.select('.innerLabelName').selectAll('text');
                 var updateKey = d3.select('.keyRect').selectAll('text');
 
                 generateKeyList(dataI[currentEquityIndex]);
-                console.log(currentEquityIndex);
 
                 var data0 = path.data(), // store the current data before updating to the new
                     data1 = pie(data);
@@ -193,6 +207,7 @@ export default function donutChart() {
                 updateLines = updateLines.data(data1, key);
                 updateLabels = updateLabels.data(data1, key);
                 updateInnerData = updateInnerData.data(innerdata1, key);
+                updateInnerLabels = updateInnerLabels.data(innerdata1, key);
                 updateKey = updateKey.data(keydata1, function(d) { return d; } );
 
 
@@ -218,6 +233,12 @@ export default function donutChart() {
                     .attr('fill', function(d) { return colour(d.data["name"]); })
                     .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
+
+                updateInnerLabels.enter().append('text')
+                    .attr('dy', '.35em')
+                    .html(updateInnerLabelText)
+                    .attr('transform', labelInnerTransform)
+                    .style('text-anchor', function(d) { return (midAngle(d)) < Math.PI ? 'start' : 'end'; });
 
                 updateKey.enter().append('text')
                     .each(function(d, i) { this._current = d; })
@@ -248,6 +269,9 @@ export default function donutChart() {
                     .transition()
                     .duration(1)
                     .attrTween("d", arcTween2)
+                    .remove();
+
+                updateInnerLabels.exit()
                     .remove();
 
                 updateKey.exit()
@@ -313,6 +337,15 @@ export default function donutChart() {
                 return [arc.centroid(d), outerArc.centroid(d), pos]
             }
 
+            function calculatePoints2(d) {
+                var pos = arcInnerText.centroid(d);
+                var arcInnerLabelEnd = d3.arc()
+                    .outerRadius(radius * 0.3)
+                    .innerRadius(radius * 0.3);
+                pos[0] = radius * 0.15 * (midAngle(d) < Math.PI ? 1 : -1);
+                return [arc2.centroid(d), arcInnerLabelEnd.centroid(d), pos]
+            }
+
             function labelTransform(d) {
                 // effectively computes the centre of the slice.
                 // see https://github.com/d3/d3-shape/blob/master/README.md#arc_centroid
@@ -323,8 +356,20 @@ export default function donutChart() {
                 return 'translate(' + pos + ')';
             }
 
+            function labelInnerTransform(d) {
+                var pos = arcInnerText.centroid(d);
+
+                // changes the point to be on left or right depending on where label is.
+                pos[0] = pos[0] + radius * 0.05 * (midAngle(d) > Math.PI ? 1 : -1);
+                return 'translate(' + pos + ')';
+            }
+
             function updateLabelText(d) {
                 return d.data[category] + ': <tspan>' + percentFormat(d.data[variable]) + '</tspan>';
+            }
+
+            function updateInnerLabelText(d) {
+                return d.data['symbol'];
             }
 
             // function that calculates transition path for label and also it's text anchoring
@@ -360,6 +405,18 @@ export default function donutChart() {
                         pos = outerArc.centroid(d2);
                     pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
                     return [arc.centroid(d2), outerArc.centroid(d2), pos];
+                };
+            }
+
+            function pointTween2(d) {
+                this._current = this._current || d;
+                var interpolate = d3.interpolate(this._current, d);
+                this._current = interpolate(0);
+                return function(t){
+                    var d2  = interpolate(t),
+                        pos = arcInnerText.centroid(d2);
+                    pos[0] = radius * 0.005 * (midAngle(d2) < Math.PI ? 1 : -1);
+                    return [arc2.centroid(d2), arcInnerText.centroid(d2), pos];
                 };
             }
 
@@ -490,7 +547,7 @@ export default function donutChart() {
         if (!arguments.length) return data;
         data = value["bySector"];
         dataInner = value["byEquity"][0]; //hardcode 0 for 1 time tick instead of dynamic-
-        dataI = dataInner[currentInner]
+        dataI = dataInner[currentInner];
         if (typeof updateData === 'function') updateData();
         return chart;
     };

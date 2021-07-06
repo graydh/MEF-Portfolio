@@ -127,7 +127,7 @@ export default function donutChart() {
                     .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
 
-            var centerLabel = svg.select('innerLabelName')
+            var centerLabel = svg.select('.innerLabelName')
                     .selectAll('text')
                     .data(pieInner(dataI))
                 .enter().append('text')
@@ -199,7 +199,6 @@ export default function donutChart() {
                     innerdata1 = pieInner(dataI);
                 var keydata0 = updateKey.data(),
                     keydata1 = dataKey;
-
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
                 // already exists in the chart, it will have its data updated rather than removed and re-added.

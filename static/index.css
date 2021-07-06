@@ -36,7 +36,8 @@ path {
 }
 
 .innerLabelName {
-    font-weight: bold;
+    font-style: italic;
+    font-weight: 500;
 }
 
 .keyRect {

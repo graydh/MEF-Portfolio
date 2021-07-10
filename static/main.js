@@ -9,7 +9,7 @@ export default function donutChart() {
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
-        colour = d3.scaleOrdinal(d3.schemeCategory20c), // colour scheme TODO
+        colour = d3.scaleOrdinal([d3.rgb(133,4,31), d3.rgb(144,37,59), d3.rgb(155,69,87), d3.rgb(167,102,116), d3.rgb(178,135,144), d3.rgb(189,167,172), d3.rgb(200,200,200), d3.rgb(140,140,140), d3.rgb(80,80,80)]),
         variable, // value in data that will dictate proportions on chart
         variableInner,
         category, // compare data by
@@ -55,7 +55,7 @@ export default function donutChart() {
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
               .append('g')
-                .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+                .attr('transform', 'translate(' + ((width / 2) - keyWidth)  + ',' + (height / 2) + ')');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -66,7 +66,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'inner');
             svg.append('g').attr('class', 'innerLabelName');
             svg.append('g').attr('class', 'keyRect')
-                .attr('transform', 'translate(' + (width / 2 - keyWidth) + ',' + (-(height / 2) + ((height-keyHeight)/2)) + ')');
+                .attr('transform', 'translate(' + ((width / 2) - keyWidth) + ',' + (((height-keyHeight) / 2) - (height / 2) ) + ')');
             // ===========================================================================================
 
             // ===========================================================================================

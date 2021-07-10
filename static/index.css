@@ -22,6 +22,7 @@ polyline{
 /* styling for the donut slices*/
 path {
     shape-rendering: geometricPrecision;
+    stroke-width : 2px;
 }
 
 /* Make the percentage on the text labels bold*/

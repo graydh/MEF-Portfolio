@@ -1,1 +1,2 @@
 Flask~=1.1.2
+alpaca-trade-api~=1.2.3

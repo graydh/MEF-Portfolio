@@ -21,7 +21,7 @@
 
             var json = await fetch('/data')
                 .then(function (response) {
-                    return response.json(); // But parse it as JSON this time
+                    return response.json(); // parse as JSON
                 })
                 .then(function (json) {
 
@@ -37,8 +37,6 @@
                         .categoryInner('name');
                     donut.data(json);
                     d3.select('#chart').call(donut); // draw chart in div
-
-
                 });
         </script>
     </div>

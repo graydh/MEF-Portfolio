@@ -1,4 +1,6 @@
 export default function donutChart() {
+    // adapted from https://bl.ocks.org/mbhall88/22f91dc6c9509b709defde9dc29c63f2
+
     var data = [], // outer donut
         dataI = [], // inner donut (selection),
         dataKey = [],
@@ -9,7 +11,7 @@ export default function donutChart() {
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
-        colour = d3.scaleOrdinal([d3.rgb(133,4,31), d3.rgb(144,37,59), d3.rgb(155,69,87), d3.rgb(167,102,116), d3.rgb(178,135,144), d3.rgb(189,167,172), d3.rgb(200,200,200), d3.rgb(140,140,140), d3.rgb(80,80,80)]),
+        colour = d3.scaleOrdinal([d3.rgb(133,4,31), d3.rgb(144,37,59), d3.rgb(155,69,87), d3.rgb(167,102,116), d3.rgb(178,135,144), d3.rgb(189,167,172), d3.rgb(200,200,200), d3.rgb(140,140,140), d3.rgb(80,80,80)]), //MEF Color Space
         variable, // value in data that will dictate proportions on chart
         variableInner,
         category, // compare data by
@@ -181,7 +183,6 @@ export default function donutChart() {
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
-                //TODO - bug where inner labels dont appear til first click
                 var updatePath = d3.select('.slices').selectAll('path')
                     .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; });
                 var updateLines = d3.select('.lines').selectAll('polyline');
@@ -335,7 +336,7 @@ export default function donutChart() {
                 pos[0] = radius * 0.95 * (midAngle(d) < Math.PI ? 1 : -1);
                 return [arc.centroid(d), outerArc.centroid(d), pos]
             }
-
+            // same but for inner
             function calculatePoints2(d) {
                 var pos = arcInnerText.centroid(d);
                 var arcInnerLabelEnd = d3.arc()
@@ -407,6 +408,7 @@ export default function donutChart() {
                 };
             }
 
+            // same but for inner
             function pointTween2(d) {
                 this._current = this._current || d;
                 var interpolate = d3.interpolate(this._current, d);

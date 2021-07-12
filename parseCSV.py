@@ -9,7 +9,7 @@ api = alpaca_trade_api.rest.REST()
 
 def processCSV():
     data = {}
-    with open("static/archiveHoldings.csv", newline='\n') as csvFile:
+    with open("static/archiveHoldings.csv", newline='\n') as csvFile: #TODO - refactor to retrieve remotely from drive, maybe sheets
         columns = ['asset_type', 'name', 'open_order', 'symbol', 'CUSIP', 'last_price', 'as_of', 'quantity', 'market_value',
                    'today_pct_change', 'today_price_change', 'total_cost', 'adjusted_cost', 'unrealized_gain_pct',
                    'unrealized_gain_price', 'accrued_interest', 'dividend', 'yield', 'maturity_date', 'pct_portfolio',

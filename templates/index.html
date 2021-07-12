@@ -19,12 +19,11 @@
         <script type="module">
             import donutChart from './static/main.js';
 
-            var json = await fetch('/data')
+            var json = fetch('/data')
                 .then(function (response) {
                     return response.json(); // parse as JSON
                 })
                 .then(function (json) {
-
                     var donut = donutChart()
                         .width(1200)
                         .height(500)

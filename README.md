@@ -2,6 +2,9 @@
 
 *a full-stack data visualization built with Flask and D3*
 
+This visualization presents the current holdings and associated equity prices for the Minutemen Equity Fund's Portfolio.
+The outer donut displays the breakdown by sector value weight, while the inner displays the value breakdown of the equitys covered by the currently selected sector.
+Selections are apparent through black outlines on the slice. A sector and equity pairing are always defined to create rectangle key display.
 
 
 ### Live deployment:

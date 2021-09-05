@@ -79,7 +79,6 @@ export default function donutChart() {
                 .data(pie(data))
               .enter().append('path')
                 .attr('fill', function(d) { return colour(d.data[category]); })
-                .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; })
                 .attr('d', arc);
             // ===========================================================================================
 
@@ -127,7 +126,6 @@ export default function donutChart() {
                     .data(pieInner(dataI))
                 .enter().append('path')
                     .attr('fill', function(d) { return colour(d.data["name"]); })
-                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
 
             var centerLabel = svg.select('.innerLabelName')
@@ -184,12 +182,10 @@ export default function donutChart() {
             // ===========================================================================================
             // FUNCTION TO UPDATE CHART
             updateData = function() {
-                var updatePath = d3.select('.slices').selectAll('path')
-                    .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; });
+                var updatePath = d3.select('.slices').selectAll('path');
                 var updateLines = d3.select('.lines').selectAll('polyline');
                 var updateLabels = d3.select('.labelName').selectAll('text');
-                var updateInnerData = d3.select('.inner').selectAll('path')
-                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; });
+                var updateInnerData = d3.select('.inner').selectAll('path');
                 var updateInnerLabels = d3.select('.innerLabelName').selectAll('text');
                 var updateKey = d3.select('.keyRect').selectAll('text');
 
@@ -215,7 +211,6 @@ export default function donutChart() {
                 // adds new slices/lines/labels
                 updatePath.enter().append('path')
                     .each(function(d, i) { this._current = findNeighborArc(i, data0, data1, key) || d; })
-                    .attr('stroke', function(d){ if(d.data["sector"] == currentInner){ return "black" }; return null; })
                     .attr('fill', function(d) {  return colour(d.data[category]); })
                     .attr('d', arc);
 
@@ -232,7 +227,6 @@ export default function donutChart() {
                 updateInnerData.enter().append('path')
                     .each(function(d, i) { this._current = findNeighborArc(i, innerdata0, innerdata1, key) || d; })
                     .attr('fill', function(d) { return colour(d.data["name"]); })
-                    .attr('stroke', function(d, i){ if( i == currentEquityIndex){ return "black" };  return null; })
                     .attr('d', arc2);
 
                 updateInnerLabels.enter().append('text')

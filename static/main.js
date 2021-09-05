@@ -24,9 +24,9 @@ export default function donutChart() {
         nf = new Intl.NumberFormat(),
         cornerRadius, // sets how rounded the corners are on each slice
         percentFormat = d3.format(',.2%'),
-        keyWidth = 300,
+        keyWidth = 280,
         keyHeight = 350,
-        keyMaxTextLength = 24;
+        keyMaxTextLength = 22;
 
     function chart(selection){
         selection.each(function() {
@@ -69,7 +69,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'inner');
             svg.append('g').attr('class', 'innerLabelName');
             svg.append('g').attr('class', 'keyRect')
-                .attr('transform', 'translate(' + (width / 4) + ',' + (-keyHeight / 2) + ')');
+                .attr('transform', 'translate(' + (width * 9/30) + ',' + (-keyHeight / 2) + ')');
             // ===========================================================================================
 
             // ===========================================================================================

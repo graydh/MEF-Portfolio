@@ -21,11 +21,12 @@ export default function donutChart() {
         updateData,
         generateKeyList,
         floatFormat = d3.format('.4r'),
+        nf = new Intl.NumberFormat(),
         cornerRadius, // sets how rounded the corners are on each slice
         percentFormat = d3.format(',.2%'),
-        keyWidth = 150,
+        keyWidth = 300,
         keyHeight = 350,
-        keyMaxTextLength = 13;
+        keyMaxTextLength = 24;
 
     function chart(selection){
         selection.each(function() {
@@ -57,7 +58,7 @@ export default function donutChart() {
                 .attr('width', width + margin.left + margin.right)
                 .attr('height', height + margin.top + margin.bottom)
               .append('g')
-                .attr('transform', 'translate(' + ((width / 2) - keyWidth)  + ',' + (height / 2) + ')');
+                .attr('transform', 'translate(' + (width / 2)  + ',' + (height / 2) + ')');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -68,7 +69,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'inner');
             svg.append('g').attr('class', 'innerLabelName');
             svg.append('g').attr('class', 'keyRect')
-                .attr('transform', 'translate(' + ((width / 2) - keyWidth) + ',' + (((height-keyHeight) / 2) - (height / 2) ) + ')');
+                .attr('transform', 'translate(' + (width / 4) + ',' + (-keyHeight / 2) + ')');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -118,8 +119,8 @@ export default function donutChart() {
                 .padAngle(padAngle);
 
             var arcInnerText = d3.arc()
-                .outerRadius(radius * 0.2)
-                .innerRadius(radius * 0.2);
+                .outerRadius(radius * 0.15)
+                .innerRadius(radius * 0.15);
 
             var pathInner = svg.select('.inner')
                     .selectAll('path')
@@ -148,16 +149,16 @@ export default function donutChart() {
 
             generateKeyList = function(dataObj) { //dataI[currentEquityIndex] as parameter
                 dataKey = [];
-                dataKey.push("Sector: " + dataObj["sector"].substring(0, keyMaxTextLength) + ellipse(dataObj["sector"]));
-                dataKey.push("Name: " + dataObj["name"].substring(0, keyMaxTextLength) + ellipse(dataObj["name"]));
-                dataKey.push("Ticker: " + dataObj["symbol"]);
+                dataKey.push( { "label":"Sector", "value":dataObj["sector"].substring(0, keyMaxTextLength) + ellipse(dataObj["sector"]) } );
+                dataKey.push( { "label":"Name", "value":dataObj["name"].substring(0, keyMaxTextLength) + ellipse(dataObj["name"]) } );
+                dataKey.push({ "label":"Ticker", "value":dataObj["symbol"] } );
                 if(dataObj["asset_type"] == "Stocks / Options"){
-                    dataKey.push("Current: $" + dataObj["last_price"]);
-                    dataKey.push("Cost: $" + dataObj["avg_cost"]);
-                    dataKey.push("Return: " + parseFloat(100 * (dataObj["last_price"] - dataObj["avg_cost"]) / dataObj["avg_cost"]).toFixed(2).toString() + "%");
-                    dataKey.push("Count: " + dataObj["quantity"]);
+                    dataKey.push( { "label":"Current", "value":"$" + nf.format(dataObj["last_price"]) } );
+                    dataKey.push( { "label":"Cost", "value":"$" + dataObj["avg_cost"] } );
+                    dataKey.push( { "label":"Return", "value":parseFloat(100 * (dataObj["last_price"] - dataObj["avg_cost"]) / dataObj["avg_cost"]).toFixed(2).toString() + "%" } );
+                    dataKey.push( { "label":"Shares", "value":dataObj["quantity"] } );
                 }
-                dataKey.push("Value: $" + floatFormat(dataObj["market_value"]));
+                dataKey.push( { "label":"Value", "value":"$" + nf.format(floatFormat(dataObj["market_value"])) } );
                 return dataKey;
             }
 
@@ -168,10 +169,10 @@ export default function donutChart() {
                 .attr('fill', 'none');
             dataKey = generateKeyList(dataI[currentEquityIndex]);
             var keyText = svg.select('.keyRect').selectAll('text').data(dataKey).enter()
-                .append('text')
-                .attr('y', function(d,i){ return 30 + i*40})
-                .attr('x', 10)
-                .text(function(d){ return d});
+                    .append('text')
+                    .html(updateKeyText)
+                    .attr('y', function(d,i){ return 30 + i*40})
+                    .attr('x', 10);
 
             // ===========================================================================================
 
@@ -241,10 +242,9 @@ export default function donutChart() {
                     .style('text-anchor', function(d) { return (midAngle(d)) < Math.PI ? 'start' : 'end'; });
 
                 updateKey.enter().append('text')
-                    .each(function(d, i) { this._current = d; })
+                    .html(updateKeyText)
                     .attr('y', function(d,i){ return 30 + i*40})
-                    .attr('x', 10)
-                    .text(function(d){ return d});
+                    .attr('x', 10);
 
                 // removes slices/labels/lines that are not in the current dataset
                 updatePath.exit()
@@ -360,7 +360,7 @@ export default function donutChart() {
                 var pos = arcInnerText.centroid(d);
 
                 // changes the point to be on left or right depending on where label is.
-                pos[0] = pos[0] + radius * 0.05 * (midAngle(d) > Math.PI ? 1 : -1);
+                pos[0] = pos[0] + radius * 0.07 * (midAngle(d) > Math.PI ? 1 : -1);
                 return 'translate(' + pos + ')';
             }
 
@@ -370,6 +370,10 @@ export default function donutChart() {
 
             function updateInnerLabelText(d) {
                 return d.data['symbol'];
+            }
+
+            function updateKeyText(d) {
+                return '<tspan>' + d["label"] + ': </tspan>' + d["value"];
             }
 
             // function that calculates transition path for label and also it's text anchoring

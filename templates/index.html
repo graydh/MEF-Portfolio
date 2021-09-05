@@ -1,47 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='index.css') }}">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
     <title>MEF-Portfolio</title>
 </head>
+
 <body>
+    <header>
+    </header>
+    <div id="chart" ></div>
+    <script type="module">
+        import donutChart from './static/main.js';
 
-<header>
-</header>
-
-<div class="container">
-    <div class="col-xl">
-        <div id="chart" ></div>
-        <script type="module">
-            import donutChart from './static/main.js';
-
-            var json = fetch('/data')
-                .then(function (response) {
-                    return response.json(); // parse as JSON
-                })
-                .then(function (json) {
-                    var donut = donutChart()
-                        .width(1200)
-                        .height(500)
-                        .transTime(200) // length of transitions in ms
-                        .cornerRadius(3) // sets how rounded the corners are on each slice
-                        .padAngle(0.015) // effectively dictates the gap between slices
-                        .variable('pct')
-                        .category('sector')
-                        .variableInner('pct')
-                        .categoryInner('name');
-                    donut.data(json);
-                    d3.select('#chart').call(donut); // draw chart in div
-                });
-        </script>
-    </div>
-</div>
-
-
-
+        var json = fetch('/data')
+            .then(function (response) {
+                return response.json(); // parse as JSON
+            })
+            .then(function (json) {
+                var donut = donutChart()
+                    .width(1890)
+                    .height(400)
+                    .transTime(200) // length of transitions in ms
+                    .cornerRadius(3) // sets how rounded the corners are on each slice
+                    .padAngle(0.015) // effectively dictates the gap between slices
+                    .variable('pct')
+                    .category('sector')
+                    .variableInner('pct')
+                    .categoryInner('name');
+                donut.data(json);
+                d3.select('#chart').call(donut); // draw chart in div
+            });
+    </script>
 </body>
+
 </html>

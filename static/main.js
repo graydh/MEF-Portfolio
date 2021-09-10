@@ -26,7 +26,7 @@ export default function donutChart() {
         percentFormat = d3.format(',.2%'),
         keyWidth = 280,
         keyHeight = 350,
-        keyMaxTextLength = 22;
+        keyMaxTextLength = 25;
 
     function chart(selection){
         selection.each(function() {
@@ -145,10 +145,17 @@ export default function donutChart() {
                 return ""
             }
 
+            var correctCapitalization = function(stringToFix){
+                return stringToFix.toLowerCase()
+                    .split(' ')
+                    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                    .join(' ');
+            }
+
             generateKeyList = function(dataObj) { //dataI[currentEquityIndex] as parameter
                 dataKey = [];
                 dataKey.push( { "label":"Sector", "value":dataObj["sector"].substring(0, keyMaxTextLength) + ellipse(dataObj["sector"]) } );
-                dataKey.push( { "label":"Name", "value":dataObj["name"].substring(0, keyMaxTextLength) + ellipse(dataObj["name"]) } );
+                dataKey.push( { "label":"Name", "value":correctCapitalization(dataObj["name"].substring(0, keyMaxTextLength)) + ellipse(dataObj["name"]) } );
                 dataKey.push({ "label":"Ticker", "value":dataObj["symbol"] } );
                 if(dataObj["asset_type"] == "Stocks / Options"){
                     dataKey.push( { "label":"Current", "value":"$" + nf.format(dataObj["last_price"]) } );

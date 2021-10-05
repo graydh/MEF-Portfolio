@@ -11,7 +11,7 @@ export default function donutChart() {
         width,
         height,
         margin = {top: 10, right: 10, bottom: 10, left: 10},
-        colour = d3.scaleOrdinal([d3.rgb(133,4,31), d3.rgb(139,26,58), d3.rgb(145,48,76), d3.rgb(151,70,93), d3.rgb(157,92,111), d3.rgb(162,114,128), d3.rgb(168,136,145), d3.rgb(174,158,163), d3.rgb(180,180,180)]), //MEF Color Space
+        colour = d3.scaleOrdinal([d3.rgb(128,12,44), d3.rgb(105,13,39), d3.rgb(69,7,27), d3.rgb(0,0,0), d3.rgb(38,38,38), d3.rgb(89,89,89), d3.rgb(191,191,191), d3.rgb(217,217,217), d3.rgb(188,162,170), d3.rgb(197, 145, 160), d3.rgb(166,84,107)]),
         variable, // value in data that will dictate proportions on chart
         variableInner,
         category, // compare data by

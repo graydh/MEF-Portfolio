@@ -23,6 +23,11 @@ path {
     stroke-width : 2px;
 }
 
+.chart {
+    display: flex;
+    justify-content: center;
+}
+
 /* Make the percentage on the text labels bold*/
 tspan {
     font-style: normal;

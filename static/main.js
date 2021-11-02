@@ -204,6 +204,7 @@ export default function donutChart() {
                     innerdata1 = pieInner(dataI);
                 var keydata0 = updateKey.data(),
                     keydata1 = dataKey;
+
                 // update data attached to the slices, labels, and polylines. the key function assigns the data to
                 // the correct element, rather than in order of how the data appears. This means that if a category
                 // already exists in the chart, it will have its data updated rather than removed and re-added.
@@ -212,7 +213,7 @@ export default function donutChart() {
                 updateLabels = updateLabels.data(data1, key);
                 updateInnerData = updateInnerData.data(innerdata1, key);
                 updateInnerLabels = updateInnerLabels.data(innerdata1, key);
-                updateKey = updateKey.data(keydata1, function(d) { return d; } );
+                updateKey = updateKey.data(keydata1, function(d) { return d["value"]; } );
 
 
                 // adds new slices/lines/labels
@@ -287,6 +288,9 @@ export default function donutChart() {
                 // add tooltip to mouse events on slices and labels
                 d3.selectAll('.slices path').call(toolTip);
                 d3.selectAll('.inner path').call(toolTip);
+
+                d3.selectAll('.labelName text').call(toolTip);
+                d3.selectAll('.innerLabelName text').call(toolTip);
 
             };
 

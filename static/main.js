@@ -23,7 +23,7 @@ export default function donutChart() {
         floatFormat = d3.format('.4r'),
         nf = new Intl.NumberFormat(),
         cornerRadius, // sets how rounded the corners are on each slice
-        percentFormat = d3.format(',.2%'),
+        percentFormat = d3.format(',.1%'),
         keyWidth = 280,
         keyHeight = 350,
         keyMaxTextLength = 25;

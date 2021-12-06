@@ -70,6 +70,8 @@ export default function donutChart() {
             svg.append('g').attr('class', 'innerLabelName');
             svg.append('g').attr('class', 'keyRect')
                 .attr('transform', 'translate(' + (width * 9/30) + ',' + (-keyHeight / 2) + ')');
+            svg.append('g').attr('class', 'author')
+                .attr('transform', 'translate(' + (-width * 14/30) + ',' + (keyHeight / 2) + ')');
             // ===========================================================================================
 
             // ===========================================================================================
@@ -103,6 +105,11 @@ export default function donutChart() {
                 .data(pie(data))
               .enter().append('polyline')
                 .attr('points', calculatePoints);
+            // ===========================================================================================
+
+            // ===========================================================================================
+            // add author signature
+            svg.select('.author').append('text').text('Designed by Declan Gray-Mullen');
             // ===========================================================================================
 
             // ===========================================================================================

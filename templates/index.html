@@ -21,15 +21,10 @@
             })
             .then(function (json) {
                 var donut = donutChart()
-                    .width(1380)
-                    .height(400)
-                    .transTime(200) // length of transitions in ms
-                    .cornerRadius(1) // sets how rounded the corners are on each slice
-                    .padAngle(0.015) // effectively dictates the gap between slices
                     .variable('pct')
                     .category('sector')
-                    .variableInner('pct')
-                    .categoryInner('name');
+                    .variableInner('Symbol')
+                    .categoryInner('Name');
                 donut.data(json);
                 d3.select('#chart').call(donut); // draw chart in div
             });

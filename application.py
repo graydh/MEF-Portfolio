@@ -1,4 +1,4 @@
-from parseCSV import portfolioDictionary
+from src.parseXLSX import portfolio_dictionary
 from flask import Flask, render_template
 from os import environ
 import json
@@ -12,8 +12,9 @@ def homepage():
 
 @app.route("/data")
 def initialData():
-    return json.dumps(portfolioDictionary())
+    d = json.dumps(portfolio_dictionary(), allow_nan=False)
+    print(d)
+    return d
 
 if __name__ == "__main__":
-    app.run(debug=False, port=environ.get("PORT", 5000), host=environ.get('IP', '0.0.0.0'))
-
+    app.run(port=environ.get('PORT', 5000), host=environ.get('IP', '0.0.0.0'))

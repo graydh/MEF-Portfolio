@@ -13,6 +13,16 @@ api = REST()
 def process_pickle():
     df = pd.read_pickle("db/holdings")
 
+    # hard-codes here
+    df.set_index('Symbol', inplace=True)
+
+    df.at['SUM', 'Sector'] = 'Industrials'
+    df.at['HRC', 'Sector'] = 'Healthcare'
+    df.at['TGP', 'Sector'] = 'Utilities'
+
+    df.reset_index(inplace=True)
+
+
     # update prices for stocks - replace 'Last ($)' and 'Market Value ($)' using 'Quantity'
     is_stock = df['Product Type'] == 'Stocks / Options'
     stock = df[is_stock]
@@ -26,7 +36,11 @@ def process_pickle():
     non_stock = df[[not e for e in is_stock]]
     df = pd.concat([stock, non_stock])
 
+    as_of_date = df["As Of"].mode()[0]
+    print(as_of_date)
+
     df = df.fillna('')  # js not happy about NaN
+    print(df.to_string())
     df.sort_values("Market Value ($)", inplace=True, ascending=False)
 
     # group by sector with equity objects (convert tuples to dicts)
@@ -36,7 +50,7 @@ def process_pickle():
     dict_df = dict_df.groupby('Sector')['dict'].apply(list)
     detailed = dict_df.to_dict()
 
-    return detailed
+    return detailed, as_of_date
 
 
 # produces the outer ring data for the chart
@@ -58,8 +72,9 @@ def by_sector(detailed):
 
 
 # splits the detailed df into data structured for the chart
-def into_d3_dict(detailed):
-    return {"byEquity": detailed, "bySector": by_sector(detailed)}
+def into_d3_dict(tuple_param):
+    detailed, as_of_date = tuple_param
+    return {"byEquity": detailed, "bySector": by_sector(detailed), "as_of_date": as_of_date}
 
 
 # avoids fetching more than every 5 minutes

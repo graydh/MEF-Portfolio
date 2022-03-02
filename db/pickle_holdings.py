@@ -17,9 +17,10 @@ def get_df(filepath="holdings.xlsx"):
     # primary key of df
     prim_key = "Symbol"
     # keep columns
-    keeps = [prim_key, "Product Type", "Name", "Market Value ($)", "Quantity", "Last ($)", "Adjusted Cost ($)"]
+    keeps = [prim_key, "Product Type", "Name", "Market Value ($)", "Quantity", "Last ($)", "Adjusted Cost ($)", "As Of"]
     # reads from filepath in cwd, column labels included, force primary key
     df = pd.read_excel(filepath, header=1, na_values="-", usecols=keeps).drop_duplicates(prim_key)
+    df["As Of"].fillna(df["As Of"].mode()[0], inplace=True)
     # merge pending transaction costs in if they exist
     clearing = df[df["Symbol"] == "CLER"]
     df.drop(clearing.index, inplace=True)
@@ -40,13 +41,16 @@ def add_sector_labels(df, label):
     infos = yf.Tickers(ticker_list)
     for ticker in infos.tickers.keys():
         print("Determining sector for:", ticker)
-        sector = str(infos.tickers[ticker].info['sector'])
+        try:
+            sector = str(infos.tickers[ticker].info['sector'])
+        except KeyError:
+            sector = "UNKNOWN"
+
+
         print(ticker, "is", sector)
         sectors.append(sector)
 
-    print(sectors)
     sectors = condense_sector_aliases(sectors)
-    print(sectors)
 
     # CASH - all non-equity holdings
     is_cash = [not e for e in is_equity]
@@ -61,6 +65,5 @@ def condense_sector_aliases(sectors):
 if __name__=='__main__':
     df = get_df()
     df = add_sector_labels(df, "Sector")
-    # TODO - condense sector aliases
     df.to_pickle("holdings")
 

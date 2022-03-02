@@ -3,6 +3,7 @@ export default function donutChart() {
     var // DOM binding
         data = [], // outer donut
         dataI = [], // inner donut
+        as_of_date,
         dataKey = [],
         centerText = [],
 
@@ -75,7 +76,7 @@ export default function donutChart() {
             svg.append('g').attr('class', 'keyRect')
                 .attr('transform', 'translate(' + (width * 9/30) + ',' + (-keyHeight / 2) + ')');
             svg.append('g').attr('class', 'author')
-                .attr('transform', 'translate(' + (-width * 14/30) + ',' + (keyHeight / 2) + ')');
+                .attr('transform', 'translate(' + (-width * 14/30) + ',' + (keyHeight * 0.4) + ')');
 
             var path = svg.select('.slices')
                 .selectAll('path')
@@ -101,8 +102,10 @@ export default function donutChart() {
               .enter().append('polyline')
                 .attr('points', calculatePoints);
 
+            // add as_of_date signature
+            svg.select('.author').append('text').attr("dy", "0em").attr('font-size', '0.75em').text('Holdings updated as of ' + as_of_date);
             // add author signature
-            svg.select('.author').append('text').text('Designed by Declan Gray-Mullen');
+            svg.select('.author').append('text').attr("dy", "1em").attr('font-size', '0.75em').text('Designed by Declan Gray-Mullen');
 
             // add inner donut
             var pieInner = d3.pie()
@@ -471,6 +474,7 @@ export default function donutChart() {
         if (!arguments.length) return data;
         data = value["bySector"];
         dataInner = value["byEquity"];
+        as_of_date = value["as_of_date"];
         currentInner = "Utilities";
         currentEquityIndex = 0
         dataI = dataInner[currentInner];

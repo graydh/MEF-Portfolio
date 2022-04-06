@@ -13,7 +13,6 @@ def homepage():
 @app.route("/data")
 def initialData():
     d = json.dumps(portfolio_dictionary(), allow_nan=False)
-    print(d)
     return d
 
 if __name__ == "__main__":

@@ -1,8 +1,8 @@
-import datetime
 import pandas as pd
 from collections import defaultdict
 import random
-from alpaca_trade_api.rest import REST
+from alpaca_trade_api.rest import REST, TimeFrame, TimeFrameUnit
+import datetime
 
 random.seed(1e3)
 
@@ -26,11 +26,15 @@ def process_pickle():
     # update prices for stocks - replace 'Last ($)' and 'Market Value ($)' using 'Quantity'
     is_stock = df['Product Type'] == 'Stocks / Options'
     stock = df[is_stock]
+    print(len(list(stock['Symbol'])))
+    date_today = datetime.datetime.today().strftime('%Y-%m-%d')
+    bar = api.get_bars(list(stock['Symbol']), TimeFrame(8, TimeFrameUnit.Hour), adjustment='raw', limit=100)
+    print(len(bar))     # TODO not all stocks getting returned?
+    bar_df = pd.DataFrame(data={'Symbol': [o.S for o in bar], 'Last ($)': [o.c for o in bar]})
 
-    bar = api.get_barset(list(stock['Symbol']), 'day', limit=1)
-    bar_df = pd.DataFrame(data={'Symbol': bar.keys(), 'Last ($)': [o[0].c for o in bar.values()]})
-    stock = stock.drop('Last ($)', axis=1)
-    stock = stock.join(bar_df.set_index('Symbol'), on='Symbol')
+    stock = bar_df.set_index('Symbol').combine_first(stock.set_index('Symbol'))
+    stock = stock.reset_index()
+
     stock['Market Value ($)'] = stock['Last ($)'] * stock['Quantity']
 
     non_stock = df[[not e for e in is_stock]]
@@ -39,9 +43,8 @@ def process_pickle():
     as_of_date = df["As Of"].mode()[0]
     print(as_of_date)
 
-    df = df.fillna('')  # js not happy about NaN
-    print(df.to_string())
     df.sort_values("Market Value ($)", inplace=True, ascending=False)
+    df = df.fillna('')  # js not happy about NaN
 
     # group by sector with equity objects (convert tuples to dicts)
     df['dict'] = df[list(df.columns)].to_dict("records")
@@ -83,4 +86,5 @@ def portfolio_dictionary():
     t = last_fetch['time']
     if (t is None) or ((datetime.datetime.now() - t) > datetime.timedelta(minutes=5)):
         last_fetch = {'time': datetime.datetime.now(), 'dict': into_d3_dict(process_pickle())}
+        print(last_fetch)
     return last_fetch["dict"]

@@ -1,4 +1,4 @@
-from src.parseXLSX import portfolio_dictionary
+from src.parseXLSX import fetch
 from flask import Flask, render_template
 from os import environ
 import json
@@ -12,7 +12,8 @@ def homepage():
 
 @app.route("/data")
 def initialData():
-    d = json.dumps(portfolio_dictionary(), allow_nan=False)
+    portfolio = fetch()
+    d = json.dumps(portfolio, allow_nan=False)
     return d
 
 if __name__ == "__main__":

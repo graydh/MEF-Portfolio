@@ -142,7 +142,7 @@ export default function donutChart() {
                     { "label":"Name", "value":correctCapitalization(obj[categoryInner].substring(0, keyMaxTextLength)) + ellipse(obj[categoryInner]) },
                     { "label":"Ticker", "value":obj["Symbol"] }
                 ];
-                if(obj["Product Type"] == "Stocks / Options"){
+                if(obj["Product Type"] == "Stock"){
                     dataKey.push( { "label":"Current", "value":"$" + moneyFormat(obj["Last ($)"]) } );
                     var avg_cost = obj["Adjusted Cost ($)"]/obj["Quantity"];
                     dataKey.push( { "label":"Cost", "value":"$" + moneyFormat(avg_cost) } );
@@ -475,7 +475,7 @@ export default function donutChart() {
         data = value["bySector"];
         dataInner = value["byEquity"];
         as_of_date = value["as_of_date"];
-        currentInner = "Utilities";
+        currentInner = value["default_sector"];
         currentEquityIndex = 0
         dataI = dataInner[currentInner];
         centerText = [dataI[currentEquityIndex][variableInner]];

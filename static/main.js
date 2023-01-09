@@ -139,10 +139,10 @@ export default function donutChart() {
             var generateKeyList = function(obj) {
                 dataKey = [
                     { "label":"Sector", "value":obj["Sector"].substring(0, keyMaxTextLength) + ellipse(obj["Sector"]) },
-                    { "label":"Name", "value":correctCapitalization(obj[categoryInner].substring(0, keyMaxTextLength)) + ellipse(obj[categoryInner]) }
+                    { "label":"Name", "value":correctCapitalization(obj[categoryInner].substring(0, keyMaxTextLength)) + ellipse(obj[categoryInner]) },
+                    { "label":"Ticker", "value":obj["Symbol"] }
                 ];
                 if(obj["Product Type"] == "Stock"){
-                    datakey.push( { "label":"Ticker", "value":obj["Symbol"] });
                     dataKey.push( { "label":"Current", "value":"$" + moneyFormat(obj["Last ($)"]) } );
                     var avg_cost = obj["Adjusted Cost ($)"]/obj["Quantity"];
                     dataKey.push( { "label":"Cost", "value":"$" + moneyFormat(avg_cost) } );

@@ -20,7 +20,7 @@ def process_sheet():
     is_stock = df['Product Type'] == 'Stock'
     stock = df[is_stock]
     print(len(list(stock['Symbol'])))
-    bar = api.get_bars(list(stock['Symbol']), TimeFrame(1, TimeFrameUnit.Day), start=str(datetime.date.today() - datetime.timedelta(days=3)), end=str(datetime.date.today() - datetime.timedelta(days=3)))
+    bar = api.get_bars(list(stock['Symbol']), TimeFrame(1, TimeFrameUnit.Day), start=str(datetime.date.today() - datetime.timedelta(days=3)), end=str(datetime.date.today() - datetime.timedelta(days=1)))
     print(len(bar))
     # TODO assert same length before & after?
     bar_df = pd.DataFrame(data={'Symbol': [o.S for o in bar], 'Last ($)': [o.c for o in bar]})

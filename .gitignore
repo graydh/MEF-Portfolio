@@ -1,4 +1,2 @@
-.idea/*
-**/venv
-*.pyc
 .DS_Store
+.idea

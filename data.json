@@ -1,0 +1,474 @@
+{
+   "byEquity":{
+      "Basic Materials":[
+         {
+            "Symbol":"RS",
+            "Adjusted Cost ($)":6427.41,
+            "Last ($)":287.41,
+            "Name":"RELIANCE STEEL & ALUM",
+            "Product Type":"Stock",
+            "Quantity":70.0,
+            "Sector":"Basic Materials",
+            "Market Value ($)":20118.7,
+            "index":""
+         },
+         {
+            "Symbol":"SHW",
+            "Adjusted Cost ($)":4058.5,
+            "Last ($)":268.02,
+            "Name":"SHERWIN WILLIAMS COMPANY",
+            "Product Type":"Stock",
+            "Quantity":37.0,
+            "Sector":"Basic Materials",
+            "Market Value ($)":9916.74,
+            "index":""
+         },
+         {
+            "Symbol":"FMC",
+            "Adjusted Cost ($)":7284.05,
+            "Last ($)":95.41,
+            "Name":"FMC CORP NEW",
+            "Product Type":"Stock",
+            "Quantity":70.0,
+            "Sector":"Basic Materials",
+            "Market Value ($)":6678.7,
+            "index":""
+         }
+      ],
+      "Cash":[
+         {
+            "Symbol":"",
+            "Adjusted Cost ($)":29483.74,
+            "Last ($)":"",
+            "Name":"Cash",
+            "Product Type":"Cash",
+            "Quantity":"",
+            "Sector":"Cash",
+            "Market Value ($)":29483.74,
+            "index":35.0
+         }
+      ],
+      "Consumer":[
+         {
+            "Symbol":"DKS",
+            "Adjusted Cost ($)":4571.17,
+            "Last ($)":130.97,
+            "Name":"DICKS SPORTING GOODS INC",
+            "Product Type":"Stock",
+            "Quantity":140.0,
+            "Sector":"Consumer",
+            "Market Value ($)":18335.8,
+            "index":""
+         },
+         {
+            "Symbol":"TJX",
+            "Adjusted Cost ($)":5002.07,
+            "Last ($)":86.59,
+            "Name":"TJX COS INC NEW",
+            "Product Type":"Stock",
+            "Quantity":202.0,
+            "Sector":"Consumer",
+            "Market Value ($)":17491.18,
+            "index":""
+         },
+         {
+            "Symbol":"FOXF",
+            "Adjusted Cost ($)":7321.75,
+            "Last ($)":110.99,
+            "Name":"FOX FACTORY HOLDING CORP.",
+            "Product Type":"Stock",
+            "Quantity":90.0,
+            "Sector":"Consumer",
+            "Market Value ($)":9989.1,
+            "index":""
+         },
+         {
+            "Symbol":"GNTX",
+            "Adjusted Cost ($)":6317.2,
+            "Last ($)":31.55,
+            "Name":"GENTEX CORP",
+            "Product Type":"Stock",
+            "Quantity":280.0,
+            "Sector":"Consumer",
+            "Market Value ($)":8834.0,
+            "index":""
+         },
+         {
+            "Symbol":"SCI",
+            "Adjusted Cost ($)":6990.1,
+            "Last ($)":66.16,
+            "Name":"SERVICE CORP INTL",
+            "Product Type":"Stock",
+            "Quantity":130.0,
+            "Sector":"Consumer",
+            "Market Value ($)":8600.8,
+            "index":""
+         },
+         {
+            "Symbol":"LOCO",
+            "Adjusted Cost ($)":9085.1,
+            "Last ($)":10.13,
+            "Name":"EL POLLO LOCO HOLDINGS",
+            "Product Type":"Stock",
+            "Quantity":500.0,
+            "Sector":"Consumer",
+            "Market Value ($)":5065.0,
+            "index":""
+         }
+      ],
+      "Energy":[
+         {
+            "Symbol":"ARRY",
+            "Adjusted Cost ($)":8387.43,
+            "Last ($)":19.02,
+            "Name":"ARRAY TECHNOLOGIES INC",
+            "Product Type":"Stock",
+            "Quantity":550.0,
+            "Sector":"Energy",
+            "Market Value ($)":10461.0,
+            "index":""
+         },
+         {
+            "Symbol":"AY",
+            "Adjusted Cost ($)":7610.09,
+            "Last ($)":24.6,
+            "Name":"ATLANTICA SUSTAINABLE INFR",
+            "Product Type":"Stock",
+            "Quantity":200.0,
+            "Sector":"Energy",
+            "Market Value ($)":4920.0,
+            "index":""
+         }
+      ],
+      "Financials":[
+         {
+            "Symbol":"ICE",
+            "Adjusted Cost ($)":5324.21,
+            "Last ($)":116.28,
+            "Name":"INTERCONTINENTAL EXCHANGE",
+            "Product Type":"Stock",
+            "Quantity":100.0,
+            "Sector":"Financials",
+            "Market Value ($)":11628.0,
+            "index":""
+         },
+         {
+            "Symbol":"CG",
+            "Adjusted Cost ($)":5383.95,
+            "Last ($)":34.51,
+            "Name":"THE CARLYLE GROUP INC",
+            "Product Type":"Stock",
+            "Quantity":180.0,
+            "Sector":"Financials",
+            "Market Value ($)":6211.799999999999,
+            "index":""
+         },
+         {
+            "Symbol":"WAL",
+            "Adjusted Cost ($)":5999.4,
+            "Last ($)":49.86,
+            "Name":"WESTERN ALLIANCE BANCORPORATION",
+            "Product Type":"Stock",
+            "Quantity":70.0,
+            "Sector":"Financials",
+            "Market Value ($)":3490.2,
+            "index":""
+         }
+      ],
+      "Healthcare":[
+         {
+            "Symbol":"HOLX",
+            "Adjusted Cost ($)":7657.63,
+            "Last ($)":81.32,
+            "Name":"HOLOGIC INC",
+            "Product Type":"Stock",
+            "Quantity":190.0,
+            "Sector":"Healthcare",
+            "Market Value ($)":15450.8,
+            "index":""
+         },
+         {
+            "Symbol":"JNJ",
+            "Adjusted Cost ($)":5231.78,
+            "Last ($)":171.08,
+            "Name":"JOHNSON & JOHNSON",
+            "Product Type":"Stock",
+            "Quantity":71.0,
+            "Sector":"Healthcare",
+            "Market Value ($)":12146.68,
+            "index":""
+         },
+         {
+            "Symbol":"EHC",
+            "Adjusted Cost ($)":4140.12,
+            "Last ($)":66.75,
+            "Name":"ENCOMPASS HEALTH CORP",
+            "Product Type":"Stock",
+            "Quantity":112.0,
+            "Sector":"Healthcare",
+            "Market Value ($)":7476.0,
+            "index":""
+         },
+         {
+            "Symbol":"TFX",
+            "Adjusted Cost ($)":5503.8,
+            "Last ($)":257.17,
+            "Name":"TELEFLEX INCORPORATED",
+            "Product Type":"Stock",
+            "Quantity":22.0,
+            "Sector":"Healthcare",
+            "Market Value ($)":5657.740000000001,
+            "index":""
+         }
+      ],
+      "Industrials":[
+         {
+            "Symbol":"MTZ",
+            "Adjusted Cost ($)":7395.45,
+            "Last ($)":116.51,
+            "Name":"MASTEC INC",
+            "Product Type":"Stock",
+            "Quantity":140.0,
+            "Sector":"Industrials",
+            "Market Value ($)":16311.400000000001,
+            "index":""
+         },
+         {
+            "Symbol":"SUM",
+            "Adjusted Cost ($)":7664.26,
+            "Last ($)":36.43,
+            "Name":"SUMMIT MATLS INC CL A",
+            "Product Type":"Stock",
+            "Quantity":400.0,
+            "Sector":"Industrials",
+            "Market Value ($)":14572.0,
+            "index":""
+         },
+         {
+            "Symbol":"OSIS",
+            "Adjusted Cost ($)":6919.0,
+            "Last ($)":120.15,
+            "Name":"OSI SYSTEMS INC",
+            "Product Type":"Stock",
+            "Quantity":70.0,
+            "Sector":"Industrials",
+            "Market Value ($)":8410.5,
+            "index":""
+         },
+         {
+            "Symbol":"SWK",
+            "Adjusted Cost ($)":4318.91,
+            "Last ($)":96.43,
+            "Name":"STANLEY BLACK & DECKER INC",
+            "Product Type":"Stock",
+            "Quantity":47.0,
+            "Sector":"Industrials",
+            "Market Value ($)":4532.21,
+            "index":""
+         }
+      ],
+      "REITs":[
+         {
+            "Symbol":"GLPI",
+            "Adjusted Cost ($)":8126.3,
+            "Last ($)":49.46,
+            "Name":"GAMING & LEISURE PPTYS INC",
+            "Product Type":"Stock",
+            "Quantity":202.0,
+            "Sector":"REITs",
+            "Market Value ($)":9990.92,
+            "index":""
+         },
+         {
+            "Symbol":"OUT",
+            "Adjusted Cost ($)":9290.04,
+            "Last ($)":15.31,
+            "Name":"OUTFRONT MEDIA INC COM",
+            "Product Type":"Stock",
+            "Quantity":640.0,
+            "Sector":"REITs",
+            "Market Value ($)":9798.4,
+            "index":""
+         },
+         {
+            "Symbol":"GOOD",
+            "Adjusted Cost ($)":9586.57,
+            "Last ($)":13.51,
+            "Name":"GLADSTONE COMMERCIAL CORP",
+            "Product Type":"Stock",
+            "Quantity":724.0,
+            "Sector":"REITs",
+            "Market Value ($)":9781.24,
+            "index":""
+         }
+      ],
+      "TMT":[
+         {
+            "Symbol":"GOOGL",
+            "Adjusted Cost ($)":4519.54,
+            "Last ($)":121.56,
+            "Name":"ALPHABET INC CL A",
+            "Product Type":"Stock",
+            "Quantity":200.0,
+            "Sector":"TMT",
+            "Market Value ($)":24312.0,
+            "index":""
+         },
+         {
+            "Symbol":"AAPL",
+            "Adjusted Cost ($)":2807.43,
+            "Last ($)":192.75,
+            "Name":"APPLE INC",
+            "Product Type":"Stock",
+            "Quantity":100.0,
+            "Sector":"TMT",
+            "Market Value ($)":19275.0,
+            "index":""
+         },
+         {
+            "Symbol":"QLYS",
+            "Adjusted Cost ($)":7681.96,
+            "Last ($)":133.36,
+            "Name":"QUALYS INC COM",
+            "Product Type":"Stock",
+            "Quantity":85.0,
+            "Sector":"TMT",
+            "Market Value ($)":11335.6,
+            "index":""
+         },
+         {
+            "Symbol":"JNPR",
+            "Adjusted Cost ($)":5925.6,
+            "Last ($)":29.37,
+            "Name":"JUNIPER NETWORKS",
+            "Product Type":"Stock",
+            "Quantity":230.0,
+            "Sector":"TMT",
+            "Market Value ($)":6755.1,
+            "index":""
+         },
+         {
+            "Symbol":"VRNT",
+            "Adjusted Cost ($)":6671.2,
+            "Last ($)":37.23,
+            "Name":"VERINT SYSTEMS INC",
+            "Product Type":"Stock",
+            "Quantity":140.0,
+            "Sector":"TMT",
+            "Market Value ($)":5212.2,
+            "index":""
+         },
+         {
+            "Symbol":"AZPN",
+            "Adjusted Cost ($)":4201.64,
+            "Last ($)":173.21,
+            "Name":"ASPEN TECHNOLOGY INC",
+            "Product Type":"Stock",
+            "Quantity":23.0,
+            "Sector":"TMT",
+            "Market Value ($)":3983.8300000000004,
+            "index":""
+         }
+      ],
+      "Utilities":[
+         {
+            "Symbol":"SWX",
+            "Adjusted Cost ($)":9218.87,
+            "Last ($)":66.33,
+            "Name":"SOUTHWEST GAS HOLDINGS INC",
+            "Product Type":"Stock",
+            "Quantity":135.0,
+            "Sector":"Utilities",
+            "Market Value ($)":8954.55,
+            "index":""
+         },
+         {
+            "Symbol":"ES",
+            "Adjusted Cost ($)":3794.92,
+            "Last ($)":73.7,
+            "Name":"EVERSOURCE ENERGY COM",
+            "Product Type":"Stock",
+            "Quantity":91.0,
+            "Sector":"Utilities",
+            "Market Value ($)":6706.7,
+            "index":""
+         },
+         {
+            "Symbol":"SRE",
+            "Adjusted Cost ($)":3866.1,
+            "Last ($)":151.25,
+            "Name":"SEMPRA",
+            "Product Type":"Stock",
+            "Quantity":40.0,
+            "Sector":"Utilities",
+            "Market Value ($)":6050.0,
+            "index":""
+         },
+         {
+            "Symbol":"VST",
+            "Adjusted Cost ($)":3723.76,
+            "Last ($)":28.3,
+            "Name":"VISTRA CORP",
+            "Product Type":"Stock",
+            "Quantity":200.0,
+            "Sector":"Utilities",
+            "Market Value ($)":5660.0,
+            "index":""
+         }
+      ]
+   },
+   "bySector":[
+      {
+         "sector":"Basic Materials",
+         "value":36714.14,
+         "pct":0.09571002823974695
+      },
+      {
+         "sector":"Cash",
+         "value":29483.74,
+         "pct":0.07686111095107652
+      },
+      {
+         "sector":"Consumer",
+         "value":68315.87999999999,
+         "pct":0.17809254973759872
+      },
+      {
+         "sector":"Energy",
+         "value":15381.0,
+         "pct":0.04009670237013717
+      },
+      {
+         "sector":"Financials",
+         "value":21330.0,
+         "pct":0.055605140209025794
+      },
+      {
+         "sector":"Healthcare",
+         "value":40731.219999999994,
+         "pct":0.10618214716290086
+      },
+      {
+         "sector":"Industrials",
+         "value":43826.11,
+         "pct":0.11425021056569093
+      },
+      {
+         "sector":"REITs",
+         "value":29570.559999999998,
+         "pct":0.07708744185932535
+      },
+      {
+         "sector":"TMT",
+         "value":70873.73,
+         "pct":0.1847606044907003
+      },
+      {
+         "sector":"Utilities",
+         "value":27371.25,
+         "pct":0.07135406441379734
+      }
+   ],
+   "as_of_date":"12/20/2023",
+   "default_sector":"TMT"
+}

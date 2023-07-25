@@ -1,4 +1,4 @@
-export default function donutChart() {
+function donutChart() {
     // adapted from https://bl.ocks.org/mbhall88/22f91dc6c9509b709defde9dc29c63f2
     var // DOM binding
         data = [], // outer donut

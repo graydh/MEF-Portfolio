@@ -7,6 +7,7 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <title>MEF-Portfolio</title>
     <base href="./">
+    <script src="main.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -14,8 +15,6 @@
     </header>
     <div id="chart" class="chart"></div>
     <script type="module">
-        import donutChart from '/main.js';
-
         d3.json("data.json" , function (json) {
             var donut = donutChart()
                 .variable('pct')

@@ -13,9 +13,9 @@
     </header>
     <div id="chart" class="chart"></div>
     <script type="module">
-        import donutChart from '../static/main.js';
+        import donutChart from '/main.js';
 
-        d3.json("../static/data.json" , function (json) {
+        d3.json("data.json" , function (json) {
             var donut = donutChart()
                 .variable('pct')
                 .category('sector')
